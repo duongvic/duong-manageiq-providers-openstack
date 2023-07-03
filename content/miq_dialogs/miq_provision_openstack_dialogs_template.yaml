@@ -1,0 +1,207 @@
+# Edited tabs and fields, pair this with _prov_dialog.html.haml
+
+:name: miq_provision_openstack_dialogs_template
+:description: Sample Openstack Instance Provisioning Dialog
+:dialog_type: MiqProvisionWorkflow
+:content:
+  :buttons:
+    - :submit
+    - :cancel
+  :dialogs:
+    :requester:
+      :description: Compute Info
+      :fields:
+        :owner_email:
+          :description: Email
+          :required_method: :validate_regex
+          :required_regex: !ruby/regexp /\A[\w!#$\%&'*+\/=?`\{|\}~^-]+(?:\.[\w!#$\%&'*+\/=?`\{|\}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}\Z/i
+          :required: true
+          :display: :readonly
+          :data_type: :string
+        :number_of_vms:
+          :values_from:
+            :options:
+              :max: 50
+            :method: :allowed_number_of_vms
+          :description: Count
+          :required: false
+          :display: :hide
+          :default: 1
+          :data_type: :integer
+        :vm_description:
+          :description: Instance Description
+          :required: false
+          :display: :edit
+          :data_type: :string
+          :min_length:
+          :max_length: 100
+        :vm_prefix:
+          :description: Instance Name Prefix/Suffix
+          :required_method: :validate_vm_name
+          :required: false
+          :display: :hide
+          :data_type: :string
+        :vm_name:
+          :description: Instance Name
+          :required_method: :validate_vm_name
+          :required: true
+          :notes:
+          :display: :edit
+          :data_type: :string
+          :notes_display: :show
+          :min_length:
+          :max_length: 50
+        :instance_type:
+          :values_from:
+            :method: :allowed_instance_types
+          :description: Instance Specifications
+          :required: true
+          :display: :edit
+          :data_type: :integer
+        :guest_access_key_pair:
+          :values_from:
+            :method: :allowed_guest_access_key_pairs
+          :description: Guest Access Key Pair
+          :auto_select_single: false
+          :default: nil
+          :required: false
+          :display: :edit
+          :data_type: :integer
+        :root_password:
+          :description: Root Password
+          :required: false
+          :display: :edit
+          :data_type: :string
+      :display: :show
+      :field_order:
+
+    :service:
+      :description: Image
+      :fields:
+        :src_vm_id:
+          :values_from:
+            :options:
+              :tag_filters: [ ]
+
+            :method: :allowed_templates
+          :notes:
+          :display: :edit
+          :data_type: :integer
+          :notes_display: :show
+      :display: :show
+
+    :environment:
+      :description: Network
+      :fields:
+        :placement_auto:
+          :values:
+            false: 0
+            true: 1
+          :description: Choose Automatically
+          :required: false
+          :display: :edit
+          :default: false
+          :data_type: :boolean
+        :placement_availability_zone:
+          :values_from:
+            :method: :allowed_availability_zones
+          :auto_select_single: true
+          :description: Availability Zones
+          :required_method: :validate_placement
+          :required: true
+          :display: :hide
+          :data_type: :integer
+          :required_description: Availability Zone Name
+        :cloud_tenant:
+          :values_from:
+            :method: :allowed_cloud_tenants
+          :auto_select_single: true
+          :description: Cloud Tenant
+          :required_method: :validate_placement
+          :required: true
+          :display: :hide
+          :data_type: :integer
+        :cloud_network_selection_method:
+          :values:
+            network: Network
+            port: Network Port
+          :description: Network Selection Method
+          :required: false
+          :display: :hide
+          :default: network
+          :data_type: :string
+        :private_cloud_network:
+          :values_from:
+            :method: :allowed_private_cloud_networks
+          :description: Private Networks
+          :auto_select_single: false
+          :required_method: :validate_private_cloud_network
+          :required: true
+          :display: :edit
+          :data_type: :array_integer
+        :public_cloud_network:
+          :values_from:
+            :method: :allowed_public_cloud_networks
+          :auto_select_single: true
+          :required: true
+          :required_method: :validate_public_cloud_network
+          :display: :hide
+          :data_type: :integer
+        :network_port:
+          :values_from:
+            :method: :allowed_network_ports
+          :description: Network Port
+          :auto_select_single: true
+          :required: true
+          :required_method: :validate_network_port
+          :display: :edit
+          :data_type: :integer
+        :cloud_network_type:
+          :values:
+            false: 0
+            true: 1
+          :description: Public Network?
+          :required: false
+          :display: :edit
+          :default: false
+          :data_type: :boolean
+        :security_groups:
+          :values_from:
+            :method: :allowed_security_groups
+          :description: Security Groups
+          :required: false
+          :display: :edit
+          :data_type: :array_integer
+          :auto_select_single: false
+      :display: :show
+
+    :volumes:
+      :description: Volumes
+      :fields:
+        :select_volumes:
+          :values_from:
+            :method: :allowed_volumes
+          :description: (OPTIONAL) Select boot device from available Volumes
+          :auto_select_single: false
+          :required: false
+          :display: :edit
+          :data_type: :array_integer
+        :name:
+          :description: Volume Name
+          :display: :edit
+          :data_type: :string
+          :min_length:
+          :max_length: 100
+        :size:
+          :description: Size (GB)
+          :display: :edit
+          :data_type: :string
+          :min_length:
+          :max_length: 10
+      :display: :show
+
+  :dialog_order:
+    - :requester
+    - :service
+    - :environment
+    - :volumes
